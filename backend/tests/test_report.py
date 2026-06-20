@@ -94,6 +94,24 @@ def test_audit_allows_profile_drug():
     assert a["passed"] is True
 
 
+def test_audit_allows_real_drug_name_with_suffix():
+    # 실제 약명은 숫자/괄호/제형 suffix가 붙음(예: '테고캡슐20') → 부분일치로 환각 오탐 안 함
+    ok = audit_report(_payload_with("테고캡슐20은 함께 복용 시 주의가 필요해요"),
+                      allowed_drugs={"테고캡슐20"})
+    assert ok["passed"] is True
+    assert ok["hallucination_free"] is True
+    # 단, 진짜 프로필 외 약명은 여전히 환각으로 탐지
+    bad = audit_report(_payload_with("아스피린정도 있어요"), allowed_drugs={"테고캡슐20"})
+    assert bad["hallucination_free"] is False
+
+
+def test_audit_no_false_positive_on_caution_word():
+    # 'X주의'(注意: 투여기간주의/용량주의/노인주의)가 약 접미사 '주'로 오탐되지 않아야 함
+    a = audit_report(_payload_with("투여기간주의 항목으로 등재되어 있습니다"),
+                     allowed_drugs={"가나정"})
+    assert a["hallucination_free"] is True
+
+
 def test_no_banned_words_in_generated_report():
     r = build_report(_state(["가나정", "다라캡슐", "벤조원정"], age=76))
     for it in r.items:
