@@ -1,0 +1,54 @@
+{
+  "father-01": {
+    "profile_id": "father-01",
+    "alias": "아버지",
+    "age": 76,
+    "is_pregnant": false,
+    "drugs": [
+      {
+        "item_seq": "G001",
+        "name": "가나정",
+        "entp_name": "가나제약",
+        "ingredient_codes": [
+          "ING-A"
+        ],
+        "ingredient_names": [
+          "성분-알파"
+        ]
+      },
+      {
+        "item_seq": "D001",
+        "name": "다라캡슐",
+        "entp_name": "다라파마",
+        "ingredient_codes": [
+          "ING-B"
+        ],
+        "ingredient_names": [
+          "성분-베타"
+        ]
+      },
+      {
+        "item_seq": "M001",
+        "name": "마바정",
+        "entp_name": "마바약품",
+        "ingredient_codes": [
+          "ING-C"
+        ],
+        "ingredient_names": [
+          "성분-감마"
+        ]
+      },
+      {
+        "item_seq": "N001",
+        "name": "벤조원정",
+        "entp_name": "벤조파마",
+        "ingredient_codes": [
+          "ING-J"
+        ],
+        "ingredient_names": [
+          "성분-젯"
+        ]
+      }
+    ]
+  }
+}

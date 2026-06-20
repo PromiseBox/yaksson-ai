@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# venv
+.venv/
+venv/
+
+# env / secrets
+.env
+
+# OS
+.DS_Store
+
+# 런타임 생성물 (QR 등)
+outputs/*.png
+
+# 로컬 DB 접속 도구 (커밋 금지)
+bin/
+cloud-sql-proxy

@@ -1,0 +1,27 @@
+# --- 핵심 (지금 단계) ---
+pydantic>=2.6
+httpx>=0.27
+python-dotenv>=1.0
+pytest>=8.0
+
+# --- 워크플로우 (트랙2) ---
+langgraph>=0.2
+langchain-core>=0.3
+
+# --- v2 추가 ---
+chainlit>=1.1            # 대화형 UI
+qrcode[pil]>=7.4         # QR 안전 프로필 PNG 생성
+
+# --- v3: 서버(API) + GPT-5.5 설명 생성 (근일) ---
+fastapi>=0.110           # POST /analyze
+uvicorn>=0.29            # ASGI 서버 (Cloud Run)
+openai>=1.40             # GPT-5.5 structured output (키 있을 때만 호출)
+
+# --- 이후 단계 (역할 C/D 진행 시 주석 해제) ---
+# chromadb>=0.5            # RAG (e약은요/복약지도 인덱싱)
+# langchain>=0.3           # RAG 파이프라인
+# psycopg[binary]>=3.1     # PostgreSQL
+# pgvector>=0.3            # 벡터 컬럼
+# redis>=5.0               # 세션/캐시
+# langfuse>=2.0            # 평가/모니터링
+# anthropic>=0.34          # comm 자연어 다듬기 (Claude)
