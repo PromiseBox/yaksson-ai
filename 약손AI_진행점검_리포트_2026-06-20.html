@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>약손 AI — 진행 점검 리포트 (2026-06-20)</title>
+<style>
+  :root{
+    --green:#16a34a; --amber:#f59e0b; --red:#dc2626; --gray:#94a3b8;
+    --ink:#1f2937; --muted:#64748b; --line:#e5e7eb;
+    --bg:#f4f6f8; --card:#ffffff; --brand:#0d9488; --brand-dark:#0f766e;
+    --green-bg:#ecfdf5; --amber-bg:#fffbeb; --red-bg:#fef2f2; --blue-bg:#eff6ff; --blue:#2563eb;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","맑은 고딕",Pretendard,sans-serif;
+    line-height:1.65; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:980px; margin:0 auto; padding:0 20px 80px;}
+  /* Header */
+  header.hero{
+    background:linear-gradient(135deg,var(--brand),var(--brand-dark));
+    color:#fff; padding:38px 20px 30px; margin-bottom:26px;
+  }
+  .hero-inner{max-width:980px; margin:0 auto;}
+  .hero .eyebrow{font-size:13px; letter-spacing:2px; text-transform:uppercase; opacity:.85; margin:0 0 6px;}
+  .hero h1{margin:0 0 6px; font-size:30px; font-weight:800;}
+  .hero .sub{margin:0; font-size:15px; opacity:.92;}
+  .hero .meta{margin-top:14px; display:flex; gap:8px; flex-wrap:wrap;}
+  .chip{background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.28); padding:4px 11px; border-radius:999px; font-size:12.5px;}
+  /* Verdict */
+  .verdict{
+    background:#fff; border-left:6px solid var(--brand); border-radius:12px;
+    padding:18px 20px; margin:-12px 0 26px; box-shadow:0 6px 22px rgba(15,23,42,.07);
+  }
+  .verdict .label{font-size:12px; font-weight:700; color:var(--brand-dark); letter-spacing:1px; text-transform:uppercase;}
+  .verdict p{margin:6px 0 0; font-size:18px; font-weight:700; line-height:1.5;}
+  /* Sections */
+  section{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:22px 24px; margin-bottom:20px; box-shadow:0 1px 3px rgba(15,23,42,.04);}
+  h2{font-size:21px; margin:0 0 4px; display:flex; align-items:center; gap:9px;}
+  h2 .num{display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; background:var(--brand); color:#fff; border-radius:8px; font-size:14px; font-weight:800; flex:none;}
+  .section-desc{color:var(--muted); font-size:13.5px; margin:2px 0 16px;}
+  h3{font-size:16px; margin:20px 0 8px;}
+  p{margin:8px 0;}
+  /* Legend */
+  .legend{display:flex; gap:16px; flex-wrap:wrap; font-size:13px; color:var(--muted); margin-bottom:16px;}
+  .dot{display:inline-block; width:11px; height:11px; border-radius:50%; margin-right:5px; vertical-align:middle;}
+  .dot.g{background:var(--green);} .dot.a{background:var(--amber);} .dot.r{background:var(--red);} .dot.x{background:var(--gray);}
+  /* Scorecard grid */
+  .score-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:12px;}
+  .score{border:1px solid var(--line); border-radius:11px; padding:13px 14px; background:#fff; position:relative; border-left-width:5px;}
+  .score.g{border-left-color:var(--green);} .score.a{border-left-color:var(--amber);} .score.r{border-left-color:var(--red);} .score.x{border-left-color:var(--gray);}
+  .score .name{font-weight:700; font-size:14.5px; display:flex; align-items:center; gap:7px;}
+  .score .badge{font-size:11px; font-weight:700; padding:2px 8px; border-radius:999px; margin-left:auto;}
+  .badge.g{background:var(--green-bg); color:var(--green);} .badge.a{background:var(--amber-bg); color:#b45309;} .badge.r{background:var(--red-bg); color:var(--red);} .badge.x{background:#f1f5f9; color:#475569;}
+  .score .desc{font-size:12.5px; color:var(--muted); margin-top:6px;}
+  /* Tables */
+  table{width:100%; border-collapse:collapse; margin:12px 0; font-size:13.5px;}
+  th,td{text-align:left; padding:9px 11px; border-bottom:1px solid var(--line); vertical-align:top;}
+  th{background:#f8fafc; font-weight:700; color:#334155; font-size:12.5px;}
+  tr:last-child td{border-bottom:none;}
+  td.c,th.c{text-align:center; white-space:nowrap;}
+  .pill{font-size:11.5px; font-weight:700; padding:2px 8px; border-radius:999px; white-space:nowrap;}
+  .pill.g{background:var(--green-bg); color:var(--green);} .pill.a{background:var(--amber-bg); color:#b45309;} .pill.r{background:var(--red-bg); color:var(--red);} .pill.x{background:#f1f5f9; color:#475569;}
+  /* Callouts */
+  .callout{border-radius:10px; padding:13px 15px 13px 14px; margin:12px 0; font-size:13.8px; border:1px solid transparent;}
+  .callout .ct{font-weight:700; margin:0 0 3px; display:flex; align-items:center; gap:7px;}
+  .callout p{margin:4px 0;}
+  .callout.danger{background:var(--red-bg); border-color:#fecaca;}
+  .callout.warn{background:var(--amber-bg); border-color:#fde68a;}
+  .callout.tip{background:var(--blue-bg); border-color:#bfdbfe;}
+  .callout.ok{background:var(--green-bg); border-color:#a7f3d0;}
+  /* Highlight cards (top 3) */
+  .top3{display:grid; grid-template-columns:1fr; gap:14px;}
+  .hl{border-radius:12px; padding:16px 18px; border:1px solid var(--line); border-left-width:6px;}
+  .hl.ok{border-left-color:var(--green); background:var(--green-bg);}
+  .hl.bad{border-left-color:var(--red); background:var(--red-bg);}
+  .hl.warn{border-left-color:var(--amber); background:var(--amber-bg);}
+  .hl .htitle{font-weight:800; font-size:15.5px; margin:0 0 5px;}
+  .hl p{margin:5px 0; font-size:13.8px;}
+  /* Workstream cards */
+  .ws{border:1px solid var(--line); border-left-width:5px; border-radius:11px; padding:15px 17px; margin:13px 0; background:#fff;}
+  .ws.g{border-left-color:var(--green);} .ws.a{border-left-color:var(--amber);} .ws.r{border-left-color:var(--red);}
+  .ws .wh{font-weight:800; font-size:15.5px; margin:0 0 8px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
+  .ws .lbl{font-weight:700; color:var(--brand-dark); font-size:12.5px; text-transform:uppercase; letter-spacing:.5px;}
+  .ws .row{margin:7px 0; font-size:13.8px;}
+  .ws ul{margin:5px 0 5px; padding-left:20px;}
+  .ws li{margin:3px 0; font-size:13.6px;}
+  /* Checklists */
+  .chk{list-style:none; padding:0; margin:10px 0;}
+  .chk li{position:relative; padding:8px 10px 8px 34px; border:1px solid var(--line); border-radius:9px; margin:7px 0; font-size:13.8px; background:#fff;}
+  .chk li::before{content:"☐"; position:absolute; left:11px; top:7px; font-size:16px; color:var(--muted);}
+  .chk li.rec{border-color:#a7f3d0; background:var(--green-bg);}
+  .chk li .tagrec{font-size:11px; font-weight:800; color:var(--green); margin-left:6px;}
+  .prio{display:inline-block; font-size:11px; font-weight:800; padding:1px 7px; border-radius:6px; margin-right:6px;}
+  .prio.p0{background:var(--red);color:#fff;} .prio.p1{background:var(--amber);color:#fff;} .prio.p2{background:#cbd5e1;color:#1f2937;}
+  ul.clean{margin:8px 0; padding-left:20px;} ul.clean li{margin:5px 0;}
+  code{background:#f1f5f9; padding:1px 6px; border-radius:5px; font-size:12.5px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace;}
+  .muted{color:var(--muted);}
+  footer{color:var(--muted); font-size:12.5px; text-align:center; padding:24px 0 0;}
+  .kpi{display:flex; gap:10px; flex-wrap:wrap; margin:6px 0 2px;}
+  .kpi .k{background:#f8fafc; border:1px solid var(--line); border-radius:10px; padding:9px 13px; flex:1; min-width:120px; text-align:center;}
+  .kpi .k b{display:block; font-size:21px; color:var(--brand-dark);}
+  .kpi .k span{font-size:12px; color:var(--muted);}
+  @media print{
+    body{background:#fff;} section,.verdict{box-shadow:none;}
+    header.hero{-webkit-print-color-adjust:exact; print-color-adjust:exact;}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <p class="eyebrow">약손(藥손) AI · 팀 약속상자</p>
+    <h1>진행 점검 리포트</h1>
+    <p class="sub">최신 협의(채택) 방향대로 잘 진행되고 있는지에 대한 현황 진단 · 남은 할 일 · 주의/조언</p>
+    <div class="meta">
+      <span class="chip">📅 2026-06-20</span>
+      <span class="chip">기준: GCP · Next.js · FastAPI · PostgreSQL · GPT-4o · 실 공공데이터</span>
+      <span class="chip">실측: 로컬코드 · Notion · AI Studio · GitHub PromiseBox</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="verdict">
+    <div class="label">⚑ 종합 진단 한 줄</div>
+    <p>데이터·인프라는 올바른 방향(GCP)으로 <u>잘 가고 있다</u>. 그런데 데이터와 화면을 잇는 <strong>“백엔드(FastAPI+규칙엔진)”가 비어 있어</strong>, 아직 ‘공공데이터를 실제 약 조합에 대입해 보여주는 동작 제품’으로 연결되지 않았다.</p>
+  </div>
+
+  <!-- 1. SCORECARD -->
+  <section id="scorecard">
+    <h2><span class="num">1</span> 워크스트림 스코어카드</h2>
+    <p class="section-desc">협의안 목표 대비 “현재 실제로 어디까지 됐나”를 한눈에. (GitHub 레포 실측 기준)</p>
+    <div class="legend">
+      <span><span class="dot g"></span>잘 진행 / 거의 완료</span>
+      <span><span class="dot a"></span>착수·진행 중(보강 필요)</span>
+      <span><span class="dot r"></span>미착수 / 갭 큼</span>
+      <span><span class="dot x"></span>참고</span>
+    </div>
+    <div class="kpi">
+      <div class="k"><b>3</b><span>🟢 양호</span></div>
+      <div class="k"><b>2</b><span>🟡 진행 중</span></div>
+      <div class="k"><b>6</b><span>🔴 갭/미착수</span></div>
+      <div class="k"><b>27 / 148.6만</b><span>적재 CSV / raw 행</span></div>
+    </div>
+    <div class="score-grid" style="margin-top:14px;">
+      <div class="score g"><div class="name">데이터 수집·전처리<span class="badge g">양호</span></div><div class="desc">27개 CSV, raw 148.6만 행, 결측 분석 완료</div></div>
+      <div class="score g"><div class="name">DB(PostgreSQL)<span class="badge g">양호</span></div><div class="desc">DDL·ETL·검증·Cloud SQL 이관덤프 준비완료</div></div>
+      <div class="score a"><div class="name">인프라(GCP)<span class="badge a">진행</span></div><div class="desc">Terraform GCP IAM 착수(1커밋)</div></div>
+      <div class="score g"><div class="name">프론트 프로토타입<span class="badge g">존재</span></div><div class="desc">AI Studio Gemini 앱 동작</div></div>
+      <div class="score r"><div class="name">백엔드 앱(FastAPI)<span class="badge r">병목</span></div><div class="desc">팀 레포 없음 · 로직은 로컬 Mock만</div></div>
+      <div class="score r"><div class="name">프로덕션 프론트(Next.js)<span class="badge r">미착수</span></div><div class="desc">프로토타입만 있음</div></div>
+      <div class="score r"><div class="name">판정엔진 실데이터 연동<span class="badge r">미착수</span></div><div class="desc">로컬 Mock ↔ 실 PostgreSQL 미연결</div></div>
+      <div class="score r"><div class="name">GraphRAG / Neo4j<span class="badge r">코드 0</span></div><div class="desc">다이어그램만 존재 · 실DB는 PostgreSQL 단일</div></div>
+      <div class="score r"><div class="name">LLM(GPT-4o) 연동<span class="badge r">미착수</span></div><div class="desc">로컬 template · 프로토는 Gemini</div></div>
+      <div class="score a"><div class="name">가드레일(Eval/Gate)<span class="badge a">PoC</span></div><div class="desc">로컬 동작 · 프로덕션 미이식</div></div>
+      <div class="score r"><div class="name">평가(재현율/트레이싱)<span class="badge r">미착수</span></div><div class="desc">골든셋·측정·LangSmith 미정</div></div>
+      <div class="score g"><div class="name">협업·보안 위생<span class="badge g">양호</span></div><div class="desc">Notion 충실 · data 레포 시크릿 분리/체크섬</div></div>
+    </div>
+  </section>
+
+  <!-- 2. GITHUB -->
+  <section id="github">
+    <h2><span class="num">2</span> GitHub 실측 — 레포별 현황</h2>
+    <p class="section-desc">조직 <code>github.com/PromiseBox</code> (약속상자) · 4개 레포</p>
+    <table>
+      <thead><tr><th>레포</th><th class="c">공개</th><th class="c">상태</th><th>내용</th></tr></thead>
+      <tbody>
+        <tr><td><code>data</code></td><td class="c">Private</td><td class="c"><span class="pill g">🟢 충실</span></td><td>PostgreSQL DDL(+한글comment), ETL, 검증SQL, ERD, <b>Cloud SQL 이관 덤프(20260613)</b>, manifests/체크섬. <b>검증: CSV 27개·raw 1,485,936행·스키마 yakson</b></td></tr>
+        <tr><td><code>yakson_project</code></td><td class="c">Private</td><td class="c"><span class="pill a">🟡 착수</span></td><td>Terraform <code>infra/terraform/</code> — “GCP IAM Terraform configuration” <b>1커밋</b></td></tr>
+        <tr><td><code>ui_prototype</code></td><td class="c">Public</td><td class="c"><span class="pill g">🟢 존재</span></td><td><b>AI Studio Gemini 앱 그대로</b>(GEMINI_API_KEY). 명시적 “Prototype”</td></tr>
+        <tr><td><code>yaksson-ai</code></td><td class="c">Public</td><td class="c"><span class="pill x">⚪ 최소</span></td><td>기획·문서용(README)</td></tr>
+      </tbody>
+    </table>
+    <div class="callout tip">
+      <p class="ct">💡 여기서 바로 읽히는 사실 3가지</p>
+      <p>1. <b>데이터→PostgreSQL→Cloud SQL</b> 경로가 이미 코드로 존재(이관 덤프까지). GCP 타깃 확정.</p>
+      <p>2. <b>애플리케이션 백엔드(FastAPI) 레포가 없음</b> → “판정 동작”은 로컬 Mock에만 있고 팀 자산화·실데이터 연동이 안 됨.</p>
+      <p>3. <b>실제 DB는 PostgreSQL 단일.</b> Neo4j/GraphRAG는 어떤 레포에도 코드가 없음(계획만).</p>
+    </div>
+  </section>
+
+  <!-- 3. TOP 3 -->
+  <section id="top3">
+    <h2><span class="num">3</span> 꼭 보셔야 할 3가지</h2>
+    <p class="section-desc">놀랍거나(좋음) 위험한(주의) 핵심 발견.</p>
+    <div class="top3">
+      <div class="hl ok">
+        <p class="htitle">① 🟢 데이터팀이 기대 이상으로 앞서 있음</p>
+        <p><code>data</code> 레포에 PostgreSQL 스키마·ETL·Cloud SQL 이관 덤프(0613)까지 완성. 시크릿 분리·체크섬 등 위생도 우수.</p>
+        <p><b>→ 이 레포의 작업 방식을 다른 레포(backend/frontend)의 표준으로 삼으세요.</b></p>
+      </div>
+      <div class="hl bad">
+        <p class="htitle">② 🔴 “다이어그램 vs 현실” 갭 — Neo4j/GraphRAG는 코드가 0</p>
+        <p>실제 DB는 PostgreSQL 단일인데, 확정 아키텍처 그림엔 Neo4j Knowledge Graph가 화려하게 그려져 있음 → <b>발표 때 ‘과장 아키텍처’ 비판 위험.</b></p>
+        <p><b>→ MVP에선 Neo4j를 빼고 PostgreSQL로 가는 것을 강력 권장</b>(핵심 7종 판정은 관계형으로 충분). 그릴 거면 만들고, 안 만들 거면 MVP 다이어그램에서 빼기.</p>
+      </div>
+      <div class="hl warn">
+        <p class="htitle">③ ⚠️ 데이터 품질 함정 — 정작 자주 뜨는 항목의 “사유 문구”가 비어 있음</p>
+        <p>화면에 보여줄 근거 문구(PROHBT_CONTENT)가 <b>노인주의 76.8%·효능군중복 93.3%</b> 누락(병용금기는 ~3%로 양호).</p>
+        <p><b>→ 빈 사유는 LLM이 채우지 말고</b>, 카테고리 표준문구 + 출처표기 + 약사 라우팅으로 처리(로컬 코드에 이미 그 패턴 있음). 상세는 §5.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. 워크스트림 상세 -->
+  <section id="detail">
+    <h2><span class="num">4</span> 워크스트림별 상세 점검</h2>
+    <p class="section-desc">각 영역의 현황 · 평가 · 할 일 · 주의를 압축.</p>
+
+    <div class="ws g">
+      <div class="wh">🗄️ 데이터 &amp; DB <span class="pill g">🟢 가장 앞섬</span></div>
+      <div class="row"><span class="lbl">현황</span> &nbsp;14개 데이터셋 수집·결측분석, PostgreSQL 스키마·ETL·검증·Cloud SQL 이관 덤프 완료(raw 148.6만 행).</div>
+      <div class="row"><span class="lbl">평가</span> &nbsp;협의안 “로컬 전처리→GCP DB 적재”를 거의 그대로 이행. 엔지니어링 위생 우수.</div>
+      <div class="row"><span class="lbl">할 일</span></div>
+      <ul>
+        <li><b>금기내용(PROHBT_CONTENT) 결측 처리 정책 확정</b>(§5, 최우선)</li>
+        <li>조인 키(품목기준코드↔성분코드) 매핑 실패 행 로그화</li>
+        <li>골든 약물셋(재현율 정답셋)을 픽스처로 별도 관리</li>
+        <li>Cloud SQL 실제 import 1회 리허설(실값 주입 검증)</li>
+      </ul>
+      <div class="callout warn"><p class="ct">⚠️ 주의</p><p>“제외 데이터(약물유전·혈액)” 합의 vs task list의 “약물-성분-부작용-음식-운동 Knowledge Graph” 야심이 충돌 가능 → §6 결정과 함께 확정. ETL이 멱등(재적재 시 동일 결과)인지 확인 권장.</p></div>
+    </div>
+
+    <div class="ws a">
+      <div class="wh">☁️ 인프라(GCP) <span class="pill a">🟡 착수·방향 일치</span></div>
+      <div class="row"><span class="lbl">현황</span> &nbsp;<code>yakson_project</code> GCP IAM Terraform 1커밋. Cloud SQL 이관 스크립트도 GCP 전제.</div>
+      <div class="row"><span class="lbl">할 일</span></div>
+      <ul>
+        <li>Cloud Run·Cloud SQL·GCS·Secret Manager까지 Terraform 모듈화</li>
+        <li>Vercel 프로젝트 + 환경변수(서버 키 은닉) 셋업</li>
+        <li>배포 절차 문서화(최소 <code>gcloud run deploy</code>)</li>
+      </ul>
+      <div class="callout warn"><p class="ct">⚠️ 주의</p><p>Terraform state엔 시크릿이 평문으로 남음 → GCS 백엔드+잠금 사용, state를 Git에 올리지 말 것. 과제용이면 인프라는 <b>최소 4종(Cloud Run·Cloud SQL·GCS·Secret Manager)</b>으로 — 과설계 경계.</p></div>
+    </div>
+
+    <div class="ws r">
+      <div class="wh">⚙️ 백엔드 앱(FastAPI + 8노드) <span class="pill r">🔴 최대 병목</span></div>
+      <div class="row"><span class="lbl">현황</span> &nbsp;팀 레포 없음. 로직은 로컬 <code>yaksohn-ai/</code>에 존재(규칙엔진·eval·gate·handoff·scenarios·8노드) — 단 <b>Mock·template</b>.</div>
+      <div class="row"><span class="lbl">평가</span> &nbsp;<b>제품의 심장이 비어 있는 상태.</b> 데이터(🟢)와 프론트 사이를 잇는 계층 부재.</div>
+      <div class="row"><span class="lbl">할 일</span></div>
+      <ul>
+        <li>로컬 <code>yaksohn-ai/</code>를 팀 <code>backend</code> 레포로 승격</li>
+        <li><code>PgDataSource</code> 구현(<code>MockDataSource</code> 교체) — 적재된 PostgreSQL 조회</li>
+        <li>FastAPI 라우트: <code>/analyze</code> · <code>/extract-drugs</code>(OCR) · <code>/profiles</code>(CRUD·Cascade) · <code>/whatif</code> · <code>/handoff</code></li>
+        <li>Cloud Run 배포(Dockerfile)</li>
+      </ul>
+      <div class="callout ok"><p class="ct">✅ 희소식</p><p>출처 강제(eval)·약사 라우팅(gate)·중복제거·정렬 등 <b>심사·법적 안전성의 핵심이 이미 동작 코드로 있음.</b> 새로 짤 필요 없이 <b>이식</b>이 핵심. 단, <b>판정은 규칙엔진+DB가 하고 LLM은 절대 판정 금지</b>(설명만).</p></div>
+    </div>
+
+    <div class="ws g">
+      <div class="wh">🖥️ 프론트엔드 <span class="pill g">🟢 프로토</span> <span class="pill r">🔴 프로덕션</span></div>
+      <div class="row"><span class="lbl">현황</span> &nbsp;<code>ui_prototype</code>(React+Gemini) 동작. 협의 스택(Next.js/Vercel) 프로덕션은 미착수.</div>
+      <div class="row"><span class="lbl">할 일</span></div>
+      <ul>
+        <li>Next.js(Vercel) 신규 앱 — 확정 화면정의서 <b>3화면(메인/입력/출력)</b>부터</li>
+        <li>모든 AI 호출을 <b>백엔드(FastAPI) 경유</b>로(프론트에서 LLM 직호출 금지)</li>
+        <li>프로토타입의 <b>디자인/카피만 차용</b>, 로직은 백엔드 응답 렌더링</li>
+      </ul>
+      <div class="callout danger"><p class="ct">🔴 주의</p><p>프로토타입의 과장 카피(“실시간 정밀 연동/국가표준 준수/정밀 대조”)를 <b>프로덕션으로 복붙하지 말 것</b>(표시·광고 리스크, §6). <code>ui_prototype</code>은 “프로토타입”으로 동결하고 제품과 혼동 금지.</p></div>
+    </div>
+
+    <div class="ws r">
+      <div class="wh">🤖 AI: GraphRAG 보강 + GPT-4o 설명 <span class="pill r">🔴 다이어그램 단계</span></div>
+      <div class="row"><span class="lbl">현황</span> &nbsp;GraphRAG/Neo4j 코드 0. GPT-4o 연동 0(로컬 template·프로토 Gemini).</div>
+      <div class="row"><span class="lbl">할 일</span></div>
+      <ul>
+        <li><b>GPT-4o 설명 생성</b> 먼저(<code>comm.refine_with_llm</code> 연결) — 저난도·고효과</li>
+        <li>(Neo4j 채택 시) KG 스키마·적재·Cypher 템플릿·GraphRAG 빌더</li>
+      </ul>
+      <div class="callout warn"><p class="ct">⚠️ 주의</p><p><b>GraphRAG는 일정 대비 최대 리스크.</b> PostgreSQL로 핵심 7종 판정이 충분 → Neo4j는 식습관·운동/관계경로 차별화 확장으로 미루기 권장. GPT-4o 출력은 <b>규칙엔진이 만든 사실(출처) 위에서만</b> 문장화(환각 차단).</p></div>
+    </div>
+
+    <div class="ws a">
+      <div class="wh">🛡️ 가드레일·평가 <span class="pill a">🟡 PoC 있음, 미이식</span></div>
+      <div class="row"><span class="lbl">현황</span> &nbsp;로컬에 eval(출처강제·환각차단)·gate(약사 라우팅) 동작. 재현율·트레이싱 미착수.</div>
+      <div class="row"><span class="lbl">할 일</span></div>
+      <ul>
+        <li>골든셋 대비 <b>재현율 측정</b>(목표 95%+) 스크립트</li>
+        <li><b>환각 0건</b> 검증 케이스(프로필 외 약물 차단)</li>
+        <li>트레이싱 <b>LangSmith vs Langfuse 택1</b> 후 연결</li>
+      </ul>
+      <div class="callout tip"><p class="ct">💡 이게 차별화 포인트</p><p>다른 팀이 “LLM이 답하는 약 상담”을 만들 때, 약손은 “<b>출처 있는 규칙판정 + 환각 차단 + 약사 라우팅</b>”을 증명할 수 있음. 발표에서 <b>Eval 통과·출처 표기 1컷</b>을 반드시 보여줄 것.</p></div>
+    </div>
+  </section>
+
+  <!-- 5. 데이터 품질 -->
+  <section id="dataquality">
+    <h2><span class="num">5</span> ⚠️ 데이터 품질 심층 주의</h2>
+    <p class="section-desc">실데이터 적재 후 서비스 신뢰성에 가장 직결되는 위험.</p>
+    <table>
+      <thead><tr><th>테이블</th><th class="c">금기/주의 사유(PROHBT_CONTENT) 결측</th><th>함의</th></tr></thead>
+      <tbody>
+        <tr><td>병용금기</td><td class="c"><span class="pill g">2.97%</span></td><td>사유 문구 대부분 존재</td></tr>
+        <tr><td>특정연령대금기</td><td class="c"><span class="pill g">2.97%</span></td><td>양호</td></tr>
+        <tr><td>임부금기</td><td class="c"><span class="pill a">10.40%</span></td><td>일부 공백</td></tr>
+        <tr><td>용량주의</td><td class="c"><span class="pill a">40.11%</span></td><td>공백 다수</td></tr>
+        <tr><td><b>노인주의(PIM)</b></td><td class="c"><span class="pill r">76.79%</span></td><td><b>대부분 공백</b></td></tr>
+        <tr><td><b>효능군중복</b></td><td class="c"><span class="pill r">93.33%</span></td><td><b>거의 전부 공백</b></td></tr>
+        <tr><td>투여기간주의</td><td class="c"><span class="pill r">97.96%</span></td><td>거의 전부 공백</td></tr>
+      </tbody>
+    </table>
+    <div class="callout danger">
+      <p class="ct">🔴 왜 위험한가</p>
+      <p>화면에 보여줄 “근거 문구(사유)”가 PROHBT_CONTENT인데, <b>가장 흔히 뜨는 노인주의·효능군중복에서 거의 비어 있음.</b> 정책이 없으면 (a) 빈 사유로 신뢰 저하, 또는 (b) LLM이 사유를 지어내는 환각 — 둘 다 치명적.</p>
+    </div>
+    <div class="callout ok">
+      <p class="ct">✅ 권고 처리 정책 (반드시 합의)</p>
+      <p>• 사유 공백 시 <b>카테고리 표준 문구</b>로 대체(예: 노인주의 → “고령자에서 주의가 필요한 약물로 등재되어 있습니다(식약처 노인주의 목록). 상세는 약사·의사 확인 권고.”) — 로컬 코드의 <code>rec.prohibit_content or "..."</code> 패턴 이식.</p>
+      <p>• <b>출처(테이블·공고번호·공고일자)는 항상 표기</b> — 사유가 비어도 “등재됨”은 사실이라 신뢰 가능.</p>
+      <p>• <b>LLM에 사유 생성 금지.</b> 효능군중복은 “같은 효능군 2개 이상” 규칙 자체가 근거.</p>
+      <p>• intrcQesitm(상호작용) 결측을 “안전”으로 해석 금지 → “정보 없음”으로. 노인주의(112행)·효능군중복(405행)은 성분 단위 소형 참조표 → 품목↔성분코드 조인 커버리지 점검.</p>
+    </div>
+  </section>
+
+  <!-- 6. 주의·조언 -->
+  <section id="advice">
+    <h2><span class="num">6</span> 주의 · 조언 · 제안 종합</h2>
+
+    <h3>⚖️ 법규 · 안전 (최우선)</h3>
+    <ul class="clean">
+      <li><b>표시·광고</b>: “공식/실시간 연동/국가표준 준수/정밀 대조”는 사실과 달라 허위·과장 리스크 → “식약처 등재 정보를 <b>참고</b>한 위험 가능성 안내 보조 도구”로.</li>
+      <li><b>의료기기 규제 경계</b>: 식습관·운동은 “추천/치료”로 가면 규제영역 → “복용 중 <b>주의 정보</b> + 약사·의사 상담”으로만 한정.</li>
+      <li><b>진단·처방 단정 금지</b>: 중단/증량/감량/신규복용/진단 어휘 금지 → 출력에 금칙어 필터 권장.</li>
+      <li><b>개인정보</b>: MVP는 별칭·나이·성별 최소수집, 민감정보는 선택+동의. 약봉투 이미지는 <b>OCR 텍스트만 저장, 원본 미보관</b>이 가장 안전.</li>
+    </ul>
+
+    <h3>🔐 기술 · 운영</h3>
+    <ul class="clean">
+      <li><b>공유 OpenAI 키(40달러)는 서버 전용</b> — 프론트 노출 0, Secret Manager. <code>ui_prototype</code> Public이므로 <b>레포 히스토리에 실제 키 커밋 여부 점검</b>(있었다면 폐기·재발급).</li>
+      <li><b>공공 API 폴백</b>: 1차는 DB 조회(이미 적재)라 의존도 낮음 — 좋음. OCR/LLM은 외부 의존이므로 타임아웃·레이트리밋·실패 폴백 준비.</li>
+      <li><b>재현율 측정 자동화</b>: 골든셋 고정 → CI 회귀. 로컬 13개 테스트를 backend로 가져가 확장.</li>
+      <li><b>SSOT 확립</b>: “제품 레포 1개 + 아키텍처 README”로 세 갈래(로컬/프로토/팀레포) 혼선 종식. Notion=의사결정, GitHub=코드.</li>
+    </ul>
+
+    <h3>🎯 일정 · 범위 (공모전 관점)</h3>
+    <ul class="clean">
+      <li><b>MVP를 좁혀라</b>: 3화면 + 핵심 7종 판정 + 출처/약사라우팅 + GPT-4o 설명 = 심사에서 이기는 최소집합.</li>
+      <li><b>차별화 1컷</b>: “정부 데이터를 내 부모 약에 대입 → 출처 달린 경고 → Eval 통과/환각 0” 데모. 경쟁 우위는 화려함이 아니라 <b>신뢰성</b>.</li>
+      <li><b>과욕 경계</b>: Neo4j·모바일 네이티브·식습관/운동 풀구현은 ‘시간 있으면’ 확장. MVP 필수 아님.</li>
+    </ul>
+  </section>
+
+  <!-- 7. 액션 -->
+  <section id="actions">
+    <h2><span class="num">7</span> 다음 1~2주 권장 액션</h2>
+    <h3>즉시 (이번 주)</h3>
+    <ul class="chk">
+      <li><span class="prio p0">P0</span> <b>백엔드 오너 지정 + 로컬 <code>yaksohn-ai/</code> → 팀 <code>backend</code> 레포 승격</b></li>
+      <li><span class="prio p0">P0</span> <b><code>PgDataSource</code> 구현</b> — 적재된 PostgreSQL 조회(Mock과 동일 인터페이스라 교체만 하면 규칙엔진 그대로 동작)</li>
+      <li><span class="prio p0">P0</span> <b>PROHBT_CONTENT 결측 처리 정책 합의</b>(§5) 후 코드 반영</li>
+      <li><span class="prio p1">P1</span> <b>미결정 3종 확정 회의</b>(웹/모바일 · 화면 3/6 · Neo4j 필수 여부)</li>
+    </ul>
+    <h3>다음 주</h3>
+    <ul class="chk">
+      <li><span class="prio p1">P1</span> FastAPI <code>POST /analyze</code> + Cloud Run 1차 배포(실데이터 동작 엔드포인트)</li>
+      <li><span class="prio p1">P1</span> GPT-4o <code>refine_with_llm</code> 연결(설명만, 출처 위에서)</li>
+      <li><span class="prio p1">P1</span> Next.js 3화면 골격 + <code>/analyze</code> 연동(프로토 디자인 차용)</li>
+      <li><span class="prio p2">P2</span> 골든셋 + 재현율 측정 스크립트 1차</li>
+    </ul>
+  </section>
+
+  <!-- 8. 합의대기 -->
+  <section id="decisions">
+    <h2><span class="num">8</span> 팀 합의 대기 (결정해야 움직임)</h2>
+    <p class="section-desc"><span style="color:var(--green);font-weight:700;">초록 박스 = 권장안</span></p>
+    <ul class="chk">
+      <li class="rec"><b>클라이언트 형태</b>: 반응형 Next.js 웹 <span class="tagrec">✔ 권장</span> vs 네이티브 모바일앱</li>
+      <li class="rec"><b>MVP 화면</b>: 3화면 <span class="tagrec">✔ 권장</span> vs 6화면(식습관·운동 포함)</li>
+      <li class="rec"><b>Neo4j/GraphRAG</b>: MVP 제외(PostgreSQL로 충분) <span class="tagrec">✔ 권장</span> vs 즉시 착수</li>
+      <li class="rec"><b>AI Studio 프로토타입</b>: 동결 <span class="tagrec">✔ 권장</span> vs 유지보수(시 과장문구·출처·localStorage 보정 필수)</li>
+      <li><b>OCR/이미지</b>: GCP Vision/Document AI + (저장 시) GCS, 또는 OCR 텍스트만 저장</li>
+      <li><b>트레이싱</b>: LangSmith vs Langfuse</li>
+      <li><b>PROHBT_CONTENT 결측 표준 문구</b> 문안 확정</li>
+      <li><code>약손AI_기획서.docx</code>(확정문서 첨부) 내용과 본 점검 정합성 — 미열람</li>
+    </ul>
+  </section>
+
+  <footer>
+    점검 출처: 로컬 <code>yaksohn-ai/</code> 코드 · Notion(약속상자) 7개 문서+확정본 · AI Studio 앱(6/20 라이브) · GitHub <code>PromiseBox</code> 4개 레포<br>
+    약손(藥손) AI · 진행 점검 리포트 · 2026-06-20 · 동반 문서: 약손AI_전체현황_통합검토_2026-06-20
+  </footer>
+
+</div>
+</body>
+</html>
