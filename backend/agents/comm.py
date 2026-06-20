@@ -186,7 +186,8 @@ def generate_narration(payload):
         ]
         completion = client.beta.chat.completions.parse(
             model=settings.openai_model,
-            temperature=0.2,
+            # NOTE: GPT-5.5는 temperature 기본값(1)만 허용(0.2 지정 시 400). 미지정으로 둔다.
+            #       결정성은 구조화 출력 스키마 + assemble.audit(사실필드 불변/환각차단)로 확보.
             messages=[
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user", "content": _FEWSHOT_USER},
