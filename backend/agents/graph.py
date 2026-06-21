@@ -8,8 +8,12 @@ run_pipeline(): langgraph 미설치 환경에서도 동일 노드를 순차 실�
 """
 from __future__ import annotations
 
+import logging
+
 from agents import nodes
 from agents.state import PatientState
+
+logger = logging.getLogger(__name__)
 
 
 def build_graph():
@@ -56,9 +60,17 @@ def run_pipeline(state: PatientState) -> PatientState:
 
 
 def run(state: PatientState) -> PatientState:
-    """langgraph 가 있으면 그래프로, 없으면 순차로 실행."""
+    """langgraph 가 있으면 그래프로, 없으면 순차로 실행.
+
+    LangGraph 실행이 실패하면 순차로 폴백하되 '조용히' 빠지지 않도록 경고를 남긴다.
+    (langgraph 버전 변화 등으로 그래프가 깨졌는데 아무도 모르는 상황 방지 — 동작은 유지.)
+    """
     try:
         app = build_graph()
         return app.invoke(state)  # type: ignore[return-value]
     except Exception:
+        logger.warning(
+            "LangGraph 실행 실패 → 순차 폴백(run_pipeline). 그래프가 깨졌을 수 있어 점검 필요.",
+            exc_info=True,
+        )
         return run_pipeline(state)
