@@ -59,11 +59,34 @@ class MfdsDataSource:
         return self.client.dur_records(item_seq)
 
 
+_pg_datasource = None  # pg 연결은 한 run 안의 노드들이 공유(매 노드 새 커넥션 방지)
+
+
 def get_default_datasource() -> DataSource:
-    """config 기반 팩토리. 키가 없으면 자동으로 Mock 사용."""
+    """config 기반 팩토리. 키/연결이 없으면 자동으로 Mock 사용."""
     from config import settings
 
     if settings.data_source == "mfds" and settings.mfds_service_key:
         from tools.mfds_dur_client import MfdsDurClient
         return MfdsDataSource(MfdsDurClient(settings.mfds_service_key))
+    if settings.data_source == "pg" and settings.db_password:
+        return _get_pg_datasource()
     return MockDataSource()
+
+
+def _get_pg_datasource() -> DataSource:
+    """yaksok_db(Cloud SQL) PgDataSource. 연결은 1회 생성해 캐시(노드 간 공유)."""
+    global _pg_datasource
+    if _pg_datasource is None:
+        import psycopg
+
+        from config import settings
+        from tools.pg_datasource import PgDataSource
+
+        conn = psycopg.connect(
+            host=settings.db_host, port=settings.db_port, dbname=settings.db_name,
+            user=settings.db_user, password=settings.db_password,
+            autocommit=True, connect_timeout=10,
+        )
+        _pg_datasource = PgDataSource(conn)
+    return _pg_datasource
